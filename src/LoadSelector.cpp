@@ -25,6 +25,20 @@ bool LoadSelector::Filter(File file)
 // "pat."
 #define TAP_MAGIC_LITTLE_ENDIAN 0x7061742E
 
+    // no files or directories with one "." as first char
+    const char* name = file.name();
+    if (name[0] == '.')
+    {
+        if (name[1] == '.')
+        {
+            return (true);
+        }
+        else
+        {
+            return (false);
+        }
+    }
+
     if (file.isDirectory())
     {
         return (true);
@@ -171,7 +185,7 @@ void LoadSelector::OnAction()
                 {
                     if (curIndex == 0)
                     {
-                        const char* curDirName = dir.name();
+                        const char* curDirName = dir.path();
                         char* prevPath = strrchr(curDirName, '/');
                         if (!prevPath)
                             break;
@@ -215,7 +229,7 @@ void LoadSelector::OnAction()
                 }
                 else
                 {
-                    ESP32TapLoader tl(utilityCollection, 4096);
+                    ESP32TapLoader tl(utilityCollection);
                     // ESP32TapeCartLoader tapeCartLoader(utilityCollection);
                     // tapeCartLoader.Init();
                     File tmpFile = GetFileAtIndex(dir, curIndex - 1, numFiles);
